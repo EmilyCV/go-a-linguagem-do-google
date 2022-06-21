@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
+
+const MONITORAMENTOS = 2
+const DELAY = 5
 
 func main() {
 	exibeIntroducao()
 	for {
 		exibeMenu()
-
 		comando := leComando()
 		switch comando {
 		case 1:
@@ -51,7 +54,22 @@ func leComando() int {
 
 func iniciarMonitoramento() {
 	fmt.Println("Monitorando...")
-	site := "https://www.alura.com.br/"
+	sites := []string{
+		"https://random-status-code.herokuapp.com/",
+		"http://www.alura.com/",
+		"http://www.caelum.com/",
+	}
+	for i := 0; i < MONITORAMENTOS; i++ {
+		for i, site := range sites {
+			fmt.Println("Testando site", i, ":", site)
+			testaSite(site)
+			fmt.Println("")
+		}
+		time.Sleep(DELAY * time.Second)
+	}
+
+}
+func testaSite(site string) {
 	resp, _ := http.Get(site)
 
 	if resp.StatusCode == 200 {
